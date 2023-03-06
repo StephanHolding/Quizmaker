@@ -18,11 +18,16 @@ namespace QuizMaker
 	/// <summary>
 	/// Interaction logic for QuizOverview.xaml
 	/// </summary>
-	public partial class QuizOverview : Page
+	public partial class QuizOverview : Page, IUIUpdateable
 	{
 		public QuizOverview()
 		{
 			InitializeComponent();
+		}
+
+		public void UpdateUI()
+		{
+			throw new NotImplementedException();
 		}
 
 		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)

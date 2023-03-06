@@ -46,18 +46,29 @@ namespace QuizMaker
 		private void OpenFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
+			openFileDialog.Filter = SerializationManager.EXTENTION_FILTER;
+
 			if (openFileDialog.ShowDialog() == true)
 			{
-				MessageBox.Show("Open File" + NYI);
+				if (openFileDialog.CheckFileExists)
+				{
+					if (SerializationManager.Load(openFileDialog.FileName))
+					{
+						//Create UI For loaded file.
+					}
+				}
 			}
 		}
 
 		private void SaveFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
+			saveFileDialog.Filter = SerializationManager.EXTENTION_FILTER;
+
 			if (saveFileDialog.ShowDialog() == true)
 			{
-				MessageBox.Show("Save File" + NYI);
+				SerializationManager.CreateMockFile();
+				SerializationManager.SaveCurrent(saveFileDialog.FileName);
 			}
 		}
 
