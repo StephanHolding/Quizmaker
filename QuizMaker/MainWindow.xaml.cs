@@ -26,11 +26,14 @@ namespace QuizMaker
 
 		private const string NYI = " functionality not yet implemented.";
 
+		public string TestString { get; set; } = "This is a test";
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			DataContext = this;
 
-			mainFrame = frame;
+			mainFrame = Frame;
 		}
 
 		public static void ShowPage(Page toShow)
@@ -40,19 +43,20 @@ namespace QuizMaker
 
 		private void OnNewFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
+			FileManager.NewFile();
 			ShowPage(new QuizOverview());
 		}
 
 		private void OpenFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = SerializationManager.EXTENTION_FILTER;
+			openFileDialog.Filter = FileManager.EXTENSION_FILTER;
 
 			if (openFileDialog.ShowDialog() == true)
 			{
 				if (openFileDialog.CheckFileExists)
 				{
-					if (SerializationManager.Load(openFileDialog.FileName))
+					if (FileManager.Load(openFileDialog.FileName))
 					{
 						//Create UI For loaded file.
 					}
@@ -63,12 +67,11 @@ namespace QuizMaker
 		private void SaveFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
-			saveFileDialog.Filter = SerializationManager.EXTENTION_FILTER;
+			saveFileDialog.Filter = FileManager.EXTENSION_FILTER;
 
 			if (saveFileDialog.ShowDialog() == true)
 			{
-				SerializationManager.CreateMockFile();
-				SerializationManager.SaveCurrent(saveFileDialog.FileName);
+				FileManager.SaveCurrent(saveFileDialog.FileName);
 			}
 		}
 

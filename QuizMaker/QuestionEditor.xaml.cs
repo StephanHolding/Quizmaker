@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,17 +22,37 @@ namespace QuizMaker
 	public partial class QuestionEditor : Page
 	{
 
-		private List<string> incorrectQuestions = new List<string>();
-
-		public QuestionEditor()
+		public static QuizBlock CurrentlyEditing { get; private set; }
+		
+		public QuestionEditor(QuizBlock currentlyEditing)
 		{
+			CurrentlyEditing = currentlyEditing;
+
+			CurrentlyEditing.OnDataChanged += DrawUI;
+			
 			InitializeComponent();
+			DataContext = this;
+			DrawUI();
+		}
+
+		~QuestionEditor()
+		{
+			CurrentlyEditing.OnDataChanged -= DrawUI;
+		}
+
+		private void DrawUI()
+		{
+			Q_Panel.Children.Clear();
+			CA_Panel.Children.Clear();
+			IA_View.Items.Clear();
+
+			CurrentlyEditing.DrawElement("question", Q_Panel);
+			CurrentlyEditing.DrawElement("answer", CA_Panel);
 		}
 
 		private void AddIncorrectQuestion(object sender, RoutedEventArgs e)
 		{
-			if (addAnswerInputfield.Text != string.Empty)
-				incorrectQuestionList.Items.Add(addAnswerInputfield.Text);
+
 		}
 
 		private void ApplyAndExit(object sender, RoutedEventArgs e)
@@ -42,6 +63,11 @@ namespace QuizMaker
 		private void Cancel(object sender, RoutedEventArgs e)
 		{
 			MainWindow.ShowPage(new QuizOverview());
+		}
+
+		private void incorrectQuestionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
 		}
 	}
 }

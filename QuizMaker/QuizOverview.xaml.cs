@@ -15,31 +15,40 @@ using System.Windows.Shapes;
 
 namespace QuizMaker
 {
-	/// <summary>
-	/// Interaction logic for QuizOverview.xaml
-	/// </summary>
-	public partial class QuizOverview : Page, IUIUpdateable
-	{
-		public QuizOverview()
-		{
-			InitializeComponent();
-		}
+    /// <summary>
+    /// Interaction logic for QuizOverview.xaml
+    /// </summary>
+    public partial class QuizOverview : Page
+    {
+        public QuizOverview()
+        {
+            InitializeComponent();
+            UpdateUI();
+        }
 
-		public void UpdateUI()
-		{
-			throw new NotImplementedException();
-		}
+        public void UpdateUI()
+        {
+/*			SaveFile current = SerializationManager.CurrentFile;
 
-		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
-		{
-			//add to listbox
+			foreach (Question question in current.questions)
+			{
+				listbox.Items.Add(question.GetQuestionRepresentation());
+			}*/
+        }
 
-			MainWindow.ShowPage(new QuestionEditor());
-		}
+        private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
+        {
+            QuizBlock newQ = FileManager.CurrentFile.AddBlock();
+            newQ.quizElements["question"].AddComponent<TextComponent>();
+            newQ.quizElements["answer"].AddComponent<TextComponent>();
 
-		private void EditQuestionButtonClick(object sender, RoutedEventArgs e)
-		{
-			MainWindow.ShowPage(new QuestionEditor());
-		}
-	}
+            MainWindow.ShowPage(new QuestionEditor(newQ));
+        }
+
+        private void EditQuestionButtonClick(object sender, RoutedEventArgs e)
+        {
+            //edit the selected queston
+           // MainWindow.ShowPage(new QuestionEditor());
+        }
+    }
 }

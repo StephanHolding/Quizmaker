@@ -55,14 +55,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomControls\ComponentMenu.xaml.cs">
+      <DependentUpon>ComponentMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="QuestionAnswer.cs" />
-    <Compile Include="SerializationManager.cs" />
+    <Compile Include="FileManager.cs" />
     <Compile Include="QuestionEditor.xaml.cs">
       <DependentUpon>QuestionEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="QuizOverview.xaml.cs">
       <DependentUpon>QuizOverview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tag.cs" />
+    <Compile Include="UIBuilder.cs" />
+    <Page Include="CustomControls\ComponentMenu.xaml" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
