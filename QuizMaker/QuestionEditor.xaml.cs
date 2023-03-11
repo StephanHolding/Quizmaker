@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using QuizMaker.Commands;
 
 namespace QuizMaker
 {
@@ -22,37 +10,49 @@ namespace QuizMaker
 	public partial class QuestionEditor : Page
 	{
 
-		public static QuizBlock CurrentlyEditing { get; private set; }
+		private static QuizBlock currentlyEditing;
+		private static QuizElement selectedQuizElement;
 		
 		public QuestionEditor(QuizBlock currentlyEditing)
 		{
-			CurrentlyEditing = currentlyEditing;
-
-			CurrentlyEditing.OnDataChanged += DrawUI;
+			QuestionEditor.currentlyEditing = currentlyEditing;
+			QuestionEditor.currentlyEditing.OnDataChanged += DrawComponentUI;
 			
 			InitializeComponent();
 			DataContext = this;
-			DrawUI();
+			DrawElementListUI();
 		}
 
 		~QuestionEditor()
 		{
-			CurrentlyEditing.OnDataChanged -= DrawUI;
+			currentlyEditing.OnDataChanged -= DrawComponentUI;
+			CommandHandler.ClearCommandStack();
 		}
 
-		private void DrawUI()
+		private void DrawComponentUI()
 		{
-			Q_Panel.Children.Clear();
-			CA_Panel.Children.Clear();
-			IA_View.Items.Clear();
-
-			CurrentlyEditing.DrawElement("question", Q_Panel);
-			CurrentlyEditing.DrawElement("answer", CA_Panel);
+			ComponentStackPanel.Children.Clear();
+			selectedQuizElement.DrawAllComponents(ComponentStackPanel);
 		}
 
-		private void AddIncorrectQuestion(object sender, RoutedEventArgs e)
+		private void DrawElementListUI()
 		{
+			string[] keys = currentlyEditing.GetAllQuizElementKeys();
+			foreach (string key in keys)
+			{
+				ListViewItem toAdd = new ListViewItem
+				{
+					Content = key
+				};
+				toAdd.Selected += QuizElementSelected;
+				QuizElementList.Items.Add(toAdd);
+			}
+		}
 
+		private void DrawAddComponentMenu()
+		{
+			ComponentMenu.Items.Clear();
+			ComponentMenu.Items.Add(UIBuilder.BuildComponentMenu(selectedQuizElement));
 		}
 
 		private void ApplyAndExit(object sender, RoutedEventArgs e)
@@ -65,9 +65,12 @@ namespace QuizMaker
 			MainWindow.ShowPage(new QuizOverview());
 		}
 
-		private void incorrectQuestionList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void QuizElementSelected(object sender, RoutedEventArgs e)
 		{
-
+			string selectedKey = ((ListViewItem)sender).Content.ToString();
+			selectedQuizElement = currentlyEditing.quizElements[selectedKey];
+			DrawComponentUI();
+			DrawAddComponentMenu();
 		}
 	}
 }

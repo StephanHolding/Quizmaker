@@ -5,10 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuizMaker"
         mc:Ignorable="d"
-        Title="Quiz Maker" Height="500" Width="300"
-        ResizeMode="NoResize">
+        Title="Quiz Maker" Height="600" Width="500"
+        ResizeMode="NoResize"
+        Background="#f0f0f0">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.Undo" Executed="Undo_OnExecuted" CanExecute="Undo_OnCanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Redo" Executed="Redo_OnExecuted" CanExecute="Redo_OnCanExecute" />
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="Z" Command="ApplicationCommands.Undo" />
+        <KeyBinding Modifiers="Control" Key="Y" Command="ApplicationCommands.Redo"/>
+    </Window.InputBindings>
 
     <DockPanel>
+
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Click="OnNewFileMenuItemClicked"></MenuItem>
@@ -23,9 +35,9 @@
         </Menu>
 
         <Grid>
-            <TextBlock Text="{Binding Path=TestString}" />
             <Frame x:Name="Frame" NavigationUIVisibility="Hidden"/>
         </Grid>
+
     </DockPanel>
 
 </Window>

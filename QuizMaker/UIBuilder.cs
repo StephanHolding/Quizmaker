@@ -15,7 +15,8 @@ namespace QuizMaker
 		{
 			MenuItem toReturn = new MenuItem
 			{
-				Header = "Add Component"
+				Header = "Add Component",
+				Padding = new Thickness(25, 5, 25, 5)
 			};
 
 			Type[] allComponents = GetTypesThatInheritFrom<QuizComponent>();

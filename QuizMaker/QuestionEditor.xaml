@@ -1,83 +1,131 @@
-﻿<Page DataContext="{Binding RelativeSource={RelativeSource Self}}" Background="White" x:Class="QuizMaker.QuestionEditor"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:QuizMaker"
-      xmlns:customControls="clr-namespace:QuizMaker.CustomControls"
-      mc:Ignorable="d" 
-      d:DesignHeight="500" d:DesignWidth="300"
-      Title="QuestionEditor">
+﻿<Page
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    Background="#f0f0f0"
+    x:Class="QuizMaker.QuestionEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:QuizMaker"
+    mc:Ignorable="d"
+    d:DesignHeight="600"
+    d:DesignWidth="500"
+    Title="QuestionEditor">
 
-
-    <Grid Margin="0, 10">
+    <Grid>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+            <RowDefinition
+                Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top" FontWeight="Bold">Question Editor</Label>
 
-        <Grid Grid.Row="1" Margin="10, 0">
+        <Label
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontWeight="Bold"
+            FontSize="20"
+            FontFamily="Bahnschrift"
+            Margin="0,5,0,0">
+            Question Editor
+        </Label>
+
+        <Grid
+            Row="1"
+            Margin="10, 10">
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition
+                    Height="auto" />
+                <RowDefinition
+                    Height="*" />
+                <RowDefinition
+                    Height="auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0">
-                <Label>Question:</Label>
-                <StackPanel x:Name="Q_Panel">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    Width="*" />
+                <ColumnDefinition
+                    Width="2*" />
+            </Grid.ColumnDefinitions>
 
-                </StackPanel>
-                <customControls:ComponentMenu Margin="10" QuizElementKey="question"/>
-            </StackPanel>
+            <Grid
+                Row="1"
+                Column="0">
+                <ListView x:Name="QuizElementList" Padding="2">
 
-            <StackPanel  Grid.Row="1">
-                <Label>Correct Answer:</Label>
-                <StackPanel x:Name="CA_Panel">
-                    
-                </StackPanel>
-                <customControls:ComponentMenu  Margin="10" QuizElementKey="answer"/>
-                
-            </StackPanel>
-            <Grid Grid.Row="2">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-
-                <Label Grid.Row="0">Incorrect Answers:</Label>
-                
-                <ScrollViewer Grid.Row="1">
-                    <ItemsControl x:Name="IA_View" Margin="0,0,5,0">
-
-                    </ItemsControl>
-                </ScrollViewer>
-                <Grid Grid.Row="2" Margin="0, 5">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox x:Name="addAnswerInputfield" Grid.Column="0" Margin="0, 0, 5, 0"></TextBox>
-                    <Button Grid.Column="1" Padding="10, 2" HorizontalAlignment="Right"  Click="AddIncorrectQuestion">Add</Button>
-                </Grid>
+                </ListView>
             </Grid>
+
+
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                SnapsToDevicePixels="True"
+                Background="White"
+                CornerRadius="5">
+
+                <Grid
+                    Margin="10, 0">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition
+                            Height="auto" />
+                        <RowDefinition
+                            Height="auto" />
+                        <RowDefinition
+                            Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0">
+                        <Label
+                            HorizontalAlignment="Center">
+                            Components:
+                        </Label>
+                        <StackPanel
+                            x:Name="ComponentStackPanel">
+
+                        </StackPanel>
+                        <Menu x:Name="ComponentMenu" HorizontalAlignment="Center" Margin="10">
+
+                        </Menu>
+                    </StackPanel>
+                </Grid>
+
+            </Border>
+
+
         </Grid>
 
-        <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Margin="5">
-            <Button Click="ApplyAndExit" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin= "5, 0" Padding="25, 1">OK</Button>
-            <Button Click="Cancel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin= "5, 0" Padding="20, 1">Cancel</Button>
+        <WrapPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Margin="5">
+            <Button
+                Click="Cancel"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="5, 0"
+                Padding="20, 1">
+                Cancel
+            </Button>
+            <Button
+                Click="ApplyAndExit"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="5, 0"
+                Padding="25, 1">
+                OK
+            </Button>
         </WrapPanel>
-
-
     </Grid>
-
 </Page>

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using QuizMaker.Commands;
+using System.Runtime.Serialization;
 
 namespace QuizMaker
 {
@@ -13,12 +15,19 @@ namespace QuizMaker
         public static readonly Type[] types =
         {
             typeof(QuizBlock),
-            typeof(QuizElement)
+            typeof(QuizElement),
+            typeof(Tag),
+            typeof(DynamicUI),
+            typeof(QuizComponent),
+            typeof(TextComponent),
+            typeof(ImageComponent),
+            typeof(AudioComponent)
         };
     }
 
     #region BaseTypes
 
+    [DataContract]
     public abstract class DynamicUI
     {
         public abstract Control[] Draw();
@@ -46,18 +55,25 @@ namespace QuizMaker
 
     #region Block and Elements
 
+    [DataContract]
     public class QuizBlock
     {
-        public readonly Dictionary<string, QuizElement> quizElements = new Dictionary<string, QuizElement>();
+	    [DataMember]
+		public readonly Dictionary<string, QuizElement> quizElements = new Dictionary<string, QuizElement>();
+		[DataMember]
+		private string name;
 
-        public delegate void DataEvent();
 
-        public event DataEvent OnDataChanged;
-        
+		public delegate void DataEvent();
+		public event DataEvent OnDataChanged;
+
+
         public QuizBlock()
         {
-            quizElements.Add("question", new QuizElement(this, "question"));
-            quizElements.Add("answer", new QuizElement(this, "answer"));
+	        name = "new question";
+
+            quizElements.Add("Question", new QuizElement(this, "Question"));
+            quizElements.Add("Correct Answer", new QuizElement(this, "Correct Answer"));
         }
 
         public void DrawElement(string elementKey, Panel parent)
@@ -74,15 +90,29 @@ namespace QuizMaker
         {
             OnDataChanged?.Invoke();
         }
+
+        public string GetBlockRepresentation()
+        {
+	        return name;
+        }
+
+        public string[] GetAllQuizElementKeys()
+        {
+	       return quizElements.Keys.ToArray();
+        }
     }
 
+    [DataContract]
     public class QuizElement
     {
-        private readonly List<QuizComponent> components = new List<QuizComponent>();
-        private readonly QuizBlock owner;
+        [DataMember]
+        public readonly List<QuizComponent> components = new List<QuizComponent>();
+        [DataMember]
         private readonly string name;
-        
-        public QuizElement(QuizBlock owner, string name)
+
+		private readonly QuizBlock owner;
+
+		public QuizElement(QuizBlock owner, string name)
         {
             this.owner = owner;
             this.name = name;
@@ -95,9 +125,7 @@ namespace QuizMaker
 
         public void AddComponent(Type type)
         {
-            components.Add((QuizComponent)Activator.CreateInstance(type, this));
-            MessageBox.Show("adding component for " + name);
-            RaiseDataChangedEvent();
+	        CommandHandler.ExecuteCommand(new AddComponentCommand(this, type));
         }
 
         public QuizComponent GetComponent<T>() where T : QuizComponent
@@ -121,12 +149,7 @@ namespace QuizMaker
 
         public void RemoveComponent(QuizComponent instance)
         {
-            if (components.Contains(instance))
-            {
-                components.Remove(instance);
-                
-                RaiseDataChangedEvent();
-            }
+	        CommandHandler.ExecuteCommand(new RemoveComponentCommand(instance, this));
         }
 
         public void DrawAllComponents(Panel addTo)
@@ -145,11 +168,11 @@ namespace QuizMaker
             }
         }
 
-        private void RaiseDataChangedEvent()
+        public void RaiseDataChangedEvent()
         {
             owner.ExecuteOnDataChanged();
         }
-        
+
         private QuizComponent[] FindComponents<T>(bool one) where T : QuizComponent
         {
             List<QuizComponent> toReturn = new List<QuizComponent>();
@@ -173,10 +196,13 @@ namespace QuizMaker
 
     #region Components
 
+    [DataContract]
     public abstract class QuizComponent : DynamicUI
     {
         private readonly QuizElement owner;
-        private object componentData;
+
+        [DataMember]
+		private object componentData;
         
         protected QuizComponent(QuizElement owner)
         {
@@ -187,9 +213,10 @@ namespace QuizMaker
         {
             Button removeButton = new Button
             {
-                Content = "Remove Component",
+                Content = "X",
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(5)
+                Margin = new Thickness(5),
+                Padding = new Thickness(5, 2, 5, 2)
             };
 
             removeButton.Click += delegate { owner.RemoveComponent(this); };
@@ -214,7 +241,8 @@ namespace QuizMaker
         
     }
 
-    public class TextComponent : QuizComponent
+    [DataContract]
+	public class TextComponent : QuizComponent
     {
         public TextComponent(QuizElement owner) : base(owner)
         {
@@ -239,7 +267,8 @@ namespace QuizMaker
         }
     }
 
-    public class ImageComponent : QuizComponent
+    [DataContract]
+	public class ImageComponent : QuizComponent
     {
         public ImageComponent(QuizElement owner) : base(owner)
         {
@@ -251,6 +280,7 @@ namespace QuizMaker
         }
     }
 
+    [DataContract]
     public class AudioComponent : QuizComponent
     {
         public AudioComponent(QuizElement owner) : base(owner)

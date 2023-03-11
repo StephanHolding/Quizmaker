@@ -1,17 +1,8 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace QuizMaker
 {
@@ -20,6 +11,9 @@ namespace QuizMaker
     /// </summary>
     public partial class QuizOverview : Page
     {
+
+	    private int currentBlockSelection = -1;
+
         public QuizOverview()
         {
             InitializeComponent();
@@ -28,27 +22,36 @@ namespace QuizMaker
 
         public void UpdateUI()
         {
-/*			SaveFile current = SerializationManager.CurrentFile;
+	        List<QuizBlock> blocks = FileManager.CurrentFile.allBlocks;
+	        QuizBlockList.Items.Clear();
 
-			foreach (Question question in current.questions)
-			{
-				listbox.Items.Add(question.GetQuestionRepresentation());
-			}*/
+	        foreach (QuizBlock block in blocks)
+	        {
+                ListViewItem item = new ListViewItem
+                {
+	                Content = block.GetBlockRepresentation()
+                };
+                item.Selected += QuizBlockSelected;
+
+		        QuizBlockList.Items.Add(item);
+	        }
         }
 
-        private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
+		private void QuizBlockSelected(object sender, RoutedEventArgs e)
+		{
+			currentBlockSelection = QuizBlockList.Items.IndexOf(sender);
+		}
+
+		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
         {
             QuizBlock newQ = FileManager.CurrentFile.AddBlock();
-            newQ.quizElements["question"].AddComponent<TextComponent>();
-            newQ.quizElements["answer"].AddComponent<TextComponent>();
-
             MainWindow.ShowPage(new QuestionEditor(newQ));
         }
 
         private void EditQuestionButtonClick(object sender, RoutedEventArgs e)
         {
-            //edit the selected queston
-           // MainWindow.ShowPage(new QuestionEditor());
+	        QuizBlock toEdit = FileManager.CurrentFile.GetBlock(currentBlockSelection);
+	        MainWindow.ShowPage(new QuestionEditor(toEdit));
         }
     }
 }
