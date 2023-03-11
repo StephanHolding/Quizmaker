@@ -72,8 +72,10 @@ namespace QuizMaker
         {
 	        name = "new question";
 
-            quizElements.Add("Question", new QuizElement(this, "Question"));
-            quizElements.Add("Correct Answer", new QuizElement(this, "Correct Answer"));
+            quizElements.Add("Question", new QuizElement( "Question"));
+            quizElements.Add("Correct Answer", new QuizElement( "Correct Answer"));
+
+            InjectReferences();
         }
 
         public void DrawElement(string elementKey, Panel parent)
@@ -100,22 +102,30 @@ namespace QuizMaker
         {
 	       return quizElements.Keys.ToArray();
         }
+
+        public void InjectReferences()
+        {
+	        foreach (QuizElement quizElement in quizElements.Values)
+	        {
+		        quizElement.InjectReference(this);
+	        }
+		}
+
     }
 
     [DataContract]
-    public class QuizElement
+    public class QuizElement : IReferenceInjection
     {
         [DataMember]
         public readonly List<QuizComponent> components = new List<QuizComponent>();
         [DataMember]
         private readonly string name;
 
-		private readonly QuizBlock owner;
+		private QuizBlock owner;
 
-		public QuizElement(QuizBlock owner, string name)
+		public QuizElement(string name)
         {
-            this.owner = owner;
-            this.name = name;
+	        this.name = name;
         }
 
         public void AddComponent<T>() where T : QuizComponent
@@ -190,6 +200,16 @@ namespace QuizMaker
 
             return toReturn.ToArray();
         }
+
+        public void InjectReference(params object[] args)
+        {
+            owner = args[0] as QuizBlock;
+
+	        foreach (var component in components)
+	        {
+		        component.InjectReference(this);
+	        }
+        }
     }
 
     #endregion
@@ -197,19 +217,14 @@ namespace QuizMaker
     #region Components
 
     [DataContract]
-    public abstract class QuizComponent : DynamicUI
+    public abstract class QuizComponent : DynamicUI, IReferenceInjection
     {
-        private readonly QuizElement owner;
+        private QuizElement owner;
 
         [DataMember]
 		private object componentData;
-        
-        protected QuizComponent(QuizElement owner)
-        {
-            this.owner = owner;
-        }
 
-        protected virtual Control DrawComponentHeader()
+		protected virtual Control DrawComponentHeader()
         {
             Button removeButton = new Button
             {
@@ -238,17 +253,18 @@ namespace QuizMaker
         {
             return componentData != null;
         }
-        
+
+        public void InjectReference(params object[] args)
+        {
+	        owner = args[0] as QuizElement;
+        }
     }
 
     [DataContract]
 	public class TextComponent : QuizComponent
     {
-        public TextComponent(QuizElement owner) : base(owner)
-        {
-        }
 
-        public override Control[] Draw()
+	    public override Control[] Draw()
         {
             List<Control> toReturn = new List<Control>
             {
@@ -270,11 +286,8 @@ namespace QuizMaker
     [DataContract]
 	public class ImageComponent : QuizComponent
     {
-        public ImageComponent(QuizElement owner) : base(owner)
-        {
-        }
 
-        public override Control[] Draw()
+	    public override Control[] Draw()
         {
             throw new NotImplementedException();
         }
@@ -283,11 +296,7 @@ namespace QuizMaker
     [DataContract]
     public class AudioComponent : QuizComponent
     {
-        public AudioComponent(QuizElement owner) : base(owner)
-        {
-        }
-
-        public override Control[] Draw()
+	    public override Control[] Draw()
         {
             throw new NotImplementedException();
         }

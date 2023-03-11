@@ -22,7 +22,8 @@ namespace QuizMaker.Commands
 
 		public void Execute()
 		{
-			createdInstance = (QuizComponent)Activator.CreateInstance(typeToAdd, componentOwner);
+			createdInstance = (QuizComponent)Activator.CreateInstance(typeToAdd);
+			createdInstance.InjectReference(componentOwner);
 			componentOwner.components.Add(createdInstance);
 			componentOwner.RaiseDataChangedEvent();
 		}

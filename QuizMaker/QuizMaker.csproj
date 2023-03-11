@@ -59,6 +59,7 @@
     <Compile Include="Commands\AddComponentCommand.cs" />
     <Compile Include="Commands\CommandHandler.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="IReferenceInjection.cs" />
     <Compile Include="QuestionAnswer.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="QuestionEditor.xaml.cs">

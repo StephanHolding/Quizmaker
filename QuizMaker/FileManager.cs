@@ -48,6 +48,7 @@ namespace QuizMaker
 					if (loaded != null)
 					{
 						CurrentFile = loaded;
+						CurrentFile.OnLoaded();
 						return true;
 					}
 				}
@@ -69,6 +70,14 @@ namespace QuizMaker
 		public List<QuizBlock> allBlocks;
 		[DataMember]
 		public List<Tag> tags;
+
+		public void OnLoaded()
+		{
+			foreach (QuizBlock block in allBlocks)
+			{
+				block.InjectReferences();
+			}
+		}
 
 		public QuizBlock AddBlock()
 		{
