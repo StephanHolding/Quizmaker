@@ -45,13 +45,13 @@ namespace QuizMaker
 		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
         {
             QuizBlock newQ = FileManager.CurrentFile.AddBlock();
-            MainWindow.ShowPage(new QuestionEditor(newQ));
+            MainWindow.ShowPage(new QuestionEditor(newQ), MainWindow.MainContentFrame);
         }
 
         private void EditQuestionButtonClick(object sender, RoutedEventArgs e)
         {
 	        QuizBlock toEdit = FileManager.CurrentFile.GetBlock(currentBlockSelection);
-	        MainWindow.ShowPage(new QuestionEditor(toEdit));
+	        MainWindow.ShowPage(new QuestionEditor(toEdit), MainWindow.MainContentFrame);
         }
     }
 }

@@ -57,12 +57,12 @@ namespace QuizMaker
 
 		private void ApplyAndExit(object sender, RoutedEventArgs e)
 		{
-			MainWindow.ShowPage(new QuizOverview());
+			MainWindow.ShowPage(new QuizOverview(), MainWindow.MainContentFrame);
 		}
 
 		private void Cancel(object sender, RoutedEventArgs e)
 		{
-			MainWindow.ShowPage(new QuizOverview());
+			MainWindow.ShowPage(new QuizOverview(), MainWindow.MainContentFrame);
 		}
 
 		private void QuizElementSelected(object sender, RoutedEventArgs e)

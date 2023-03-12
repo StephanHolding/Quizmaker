@@ -91,6 +91,21 @@ namespace QuizMaker
 			return allBlocks[index];
 		}
 
+		public void AddTag(string tagValue)
+		{
+			tags.Add(new Tag(tagValue));
+		}
+
+		public void RemoveTag(int index)
+		{
+			tags.RemoveAt(index);
+		}
+
+		public void ChangeTagValue(int index, string newValue)
+		{
+			tags[index].Set(newValue);
+		}
+
 		public QuizBlock GetLatest()
 		{
 			try

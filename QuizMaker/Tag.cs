@@ -10,6 +10,11 @@ namespace QuizMaker
             this.tag = tag;
         }
 
+        public void Set(string tagValue)
+        {
+            tag = tagValue;
+        }
+
         [DataMember]
         public string tag;
     }

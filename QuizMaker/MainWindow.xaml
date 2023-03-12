@@ -21,7 +21,7 @@
 
     <DockPanel>
 
-        <Menu DockPanel.Dock="Top">
+        <Menu DockPanel.Dock="Top" Padding="5">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Click="OnNewFileMenuItemClicked"></MenuItem>
                 <MenuItem Header="_Open" Click="OpenFileMenuItemClicked"></MenuItem>
@@ -34,8 +34,17 @@
             </MenuItem>
         </Menu>
 
-        <Grid>
-            <Frame x:Name="Frame" NavigationUIVisibility="Hidden"/>
+        <Grid x:Name="TestGrid">
+            <TabControl>
+                <TabItem Header="Question Editor">
+                    <Frame x:Name="MainContentFrameControl" NavigationUIVisibility="Hidden"/>
+                </TabItem>
+                <TabItem Header="Tag Manager">
+                    <Frame x:Name="TagManagerFrameControl" NavigationUIVisibility="Hidden"/>
+                </TabItem>
+            </TabControl>
+
+           
         </Grid>
 
     </DockPanel>

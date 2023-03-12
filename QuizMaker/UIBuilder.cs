@@ -11,6 +11,35 @@ namespace QuizMaker
 {
 	internal static class UIBuilder
 	{
+
+		public static ColumnDefinition autoColumnDefinition = new ColumnDefinition()
+		{
+			Width = new GridLength(1, GridUnitType.Auto)
+		};
+
+		public static ColumnDefinition starColumnDefinition = new ColumnDefinition()
+		{
+			Width = new GridLength(1, GridUnitType.Star)
+		};
+
+		public static RowDefinition autoRowDefinition = new RowDefinition()
+		{
+			Height = new GridLength(1, GridUnitType.Auto)
+		};
+
+		public static RowDefinition starRowDefinition = new RowDefinition()
+		{
+			Height = new GridLength(1, GridUnitType.Star)
+		};
+
+		public static ColumnDefinition CreateStarColumnDefinition(int value)
+		{
+			return new ColumnDefinition()
+			{
+				Width = new GridLength(value, GridUnitType.Star)
+			};
+		}
+
 		public static MenuItem BuildComponentMenu(QuizElement componentOwner)
 		{
 			MenuItem toReturn = new MenuItem
@@ -21,14 +50,14 @@ namespace QuizMaker
 
 			Type[] allComponents = GetTypesThatInheritFrom<QuizComponent>();
 			List<MenuItem> menuItems = new List<MenuItem>();
-			
+
 			foreach (Type componentType in allComponents)
 			{
 				MenuItem toAdd = new MenuItem()
 				{
 					Header = componentType.Name,
 				};
-				
+
 				toAdd.Click += delegate { componentOwner.AddComponent(componentType); };
 				menuItems.Add(toAdd);
 			}

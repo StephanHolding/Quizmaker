@@ -59,6 +59,7 @@
     <Compile Include="Commands\AddComponentCommand.cs" />
     <Compile Include="Commands\CommandHandler.cs" />
     <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="HierarchyHelper.cs" />
     <Compile Include="IReferenceInjection.cs" />
     <Compile Include="QuestionAnswer.cs" />
     <Compile Include="FileManager.cs" />
@@ -69,6 +70,9 @@
       <DependentUpon>QuizOverview.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tag.cs" />
+    <Compile Include="TagTab.xaml.cs">
+      <DependentUpon>TagTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIBuilder.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -87,6 +91,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="QuizOverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TagTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
