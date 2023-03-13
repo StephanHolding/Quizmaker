@@ -36,7 +36,7 @@
 
         <Grid x:Name="TestGrid">
             <TabControl>
-                <TabItem Header="Question Editor">
+                <TabItem Header="Quiz Editor">
                     <Frame x:Name="MainContentFrameControl" NavigationUIVisibility="Hidden"/>
                 </TabItem>
                 <TabItem Header="Tag Manager">

@@ -12,9 +12,7 @@ namespace QuizMaker
     public partial class QuizOverview : Page
     {
 
-	    private int currentBlockSelection = -1;
-
-        public QuizOverview()
+	    public QuizOverview()
         {
             InitializeComponent();
             UpdateUI();
@@ -23,35 +21,33 @@ namespace QuizMaker
         public void UpdateUI()
         {
 	        List<QuizBlock> blocks = FileManager.CurrentFile.allBlocks;
-	        QuizBlockList.Items.Clear();
+	        QuestionContainer.Children.Clear();
 
-	        foreach (QuizBlock block in blocks)
+	        for (int i = 0; i < blocks.Count; i++)
 	        {
-                ListViewItem item = new ListViewItem
-                {
-	                Content = block.GetBlockRepresentation()
-                };
-                item.Selected += QuizBlockSelected;
+		        Button newButton = new Button()
+		        {
+			        Content = "Question " + i.ToString(),
+                    Padding = new Thickness(10),
+                    Margin = new Thickness(10)
+		        };
 
-		        QuizBlockList.Items.Add(item);
+		        int index = i;
+		        newButton.Click += delegate { QuestionButtonClicked(index); };
+
+		        QuestionContainer.Children.Add(newButton);
 	        }
         }
 
-		private void QuizBlockSelected(object sender, RoutedEventArgs e)
+        private void QuestionButtonClicked(int index)
 		{
-			currentBlockSelection = QuizBlockList.Items.IndexOf(sender);
+			MainWindow.ShowPage(new QuestionEditor(FileManager.CurrentFile.GetBlock(index)), MainWindow.MainContentFrame);
 		}
 
 		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
         {
             QuizBlock newQ = FileManager.CurrentFile.AddBlock();
             MainWindow.ShowPage(new QuestionEditor(newQ), MainWindow.MainContentFrame);
-        }
-
-        private void EditQuestionButtonClick(object sender, RoutedEventArgs e)
-        {
-	        QuizBlock toEdit = FileManager.CurrentFile.GetBlock(currentBlockSelection);
-	        MainWindow.ShowPage(new QuestionEditor(toEdit), MainWindow.MainContentFrame);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace QuizMaker
 
 		private void UpdateUI()
 		{
-			List<Tag> tags = FileManager.CurrentFile.tags;
+			List<Tag> tags = FileManager.CurrentFile.allAvailableTags;
 			List<ListViewItem> items = new List<ListViewItem>();
 
 			for (int i = 0; i < tags.Count; i++)
@@ -85,18 +85,18 @@ namespace QuizMaker
 		private void UpdateFile(object sender, RoutedEventArgs routedEventArgs)
 		{
 			TextBox changed = (TextBox)sender;
-			FileManager.CurrentFile.ChangeTagValue(TagListView.SelectedIndex, changed.Text);
+			FileManager.CurrentFile.ChangeAvailableTagValue(TagListView.SelectedIndex, changed.Text);
 		}
 
 		private void OnAddNewTag(object sender, RoutedEventArgs e)
 		{
-			FileManager.CurrentFile.AddTag(string.Empty);
+			FileManager.CurrentFile.AddAvailableTag(string.Empty);
 			UpdateUI();
 		}
 
 		private void OnRemoveSelectedTag(object sender, RoutedEventArgs e)
 		{
-			FileManager.CurrentFile.RemoveTag(TagListView.SelectedIndex);
+			FileManager.CurrentFile.RemoveAvailableTag(TagListView.SelectedIndex);
 			UpdateUI();
 		}
 	}

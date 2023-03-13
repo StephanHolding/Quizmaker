@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Windows.Data;
 using System.Xml;
 
 namespace QuizMaker
@@ -63,13 +64,17 @@ namespace QuizMaker
 		public SaveFile()
 		{
 			allBlocks = new List<QuizBlock>();
-			tags = new List<Tag>();
+			allAvailableTags = new List<Tag>();
 		}
 
 		[DataMember]
 		public List<QuizBlock> allBlocks;
 		[DataMember]
-		public List<Tag> tags;
+		public List<Tag> allAvailableTags;
+
+		public delegate void DataEvent();
+
+		public event DataEvent OnTagsChanged;
 
 		public void OnLoaded()
 		{
@@ -91,19 +96,35 @@ namespace QuizMaker
 			return allBlocks[index];
 		}
 
-		public void AddTag(string tagValue)
+		public void AddAvailableTag(string tagValue)
 		{
-			tags.Add(new Tag(tagValue));
+			allAvailableTags.Add(new Tag(tagValue));
+			OnTagsChanged?.Invoke();
 		}
 
-		public void RemoveTag(int index)
+		public void RemoveAvailableTag(int index)
 		{
-			tags.RemoveAt(index);
+			allAvailableTags.RemoveAt(index);
+			OnTagsChanged?.Invoke();
 		}
 
-		public void ChangeTagValue(int index, string newValue)
+		public void ChangeAvailableTagValue(int index, string newValue)
 		{
-			tags[index].Set(newValue);
+			allAvailableTags[index].Set(newValue);
+			OnTagsChanged?.Invoke();
+		}
+
+		public int GetTagIndex(string tagName)
+		{
+			for (int i = 0; i < allAvailableTags.Count; i++)
+			{
+				if (allAvailableTags[i].tag == tagName)
+				{
+					return i;
+				}
+			}
+
+			return -1;
 		}
 
 		public QuizBlock GetLatest()

@@ -40,38 +40,5 @@ namespace QuizMaker
 			};
 		}
 
-		public static MenuItem BuildComponentMenu(QuizElement componentOwner)
-		{
-			MenuItem toReturn = new MenuItem
-			{
-				Header = "Add Component",
-				Padding = new Thickness(25, 5, 25, 5)
-			};
-
-			Type[] allComponents = GetTypesThatInheritFrom<QuizComponent>();
-			List<MenuItem> menuItems = new List<MenuItem>();
-
-			foreach (Type componentType in allComponents)
-			{
-				MenuItem toAdd = new MenuItem()
-				{
-					Header = componentType.Name,
-				};
-
-				toAdd.Click += delegate { componentOwner.AddComponent(componentType); };
-				menuItems.Add(toAdd);
-			}
-
-			toReturn.ItemsSource = menuItems;
-			return toReturn;
-		}
-
-		private static Type[] GetTypesThatInheritFrom<T>()
-		{
-			Type baseType = typeof(T);
-			Assembly assembly = typeof(T).Assembly;
-			return assembly.GetTypes().Where(t => t.IsSubclassOf(baseType)).ToArray();
-		}
-
 	}
 }

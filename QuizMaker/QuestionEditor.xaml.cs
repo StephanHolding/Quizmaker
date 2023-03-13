@@ -1,31 +1,40 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using QuizMaker.Commands;
 
 namespace QuizMaker
 {
-	/// <summary>
-	/// Interaction logic for QuestionEditor.xaml
-	/// </summary>
 	public partial class QuestionEditor : Page
 	{
 
-		private static QuizBlock currentlyEditing;
-		private static QuizElement selectedQuizElement;
-		
+		private readonly QuizBlock currentlyEditing;
+		private QuizElement selectedQuizElement;
+
+		private const int MAX_CHARACTER_TAG_SELECTOR = 45;
+
 		public QuestionEditor(QuizBlock currentlyEditing)
 		{
-			QuestionEditor.currentlyEditing = currentlyEditing;
-			QuestionEditor.currentlyEditing.OnDataChanged += DrawComponentUI;
-			
+			this.currentlyEditing = currentlyEditing;
+
+			currentlyEditing.OnComponentChanged += DrawComponentUI;
+			currentlyEditing.OnQuizElementListChanged += DrawElementListUI;
+			FileManager.CurrentFile.OnTagsChanged += AvailableTagsChanged;
+
 			InitializeComponent();
 			DataContext = this;
 			DrawElementListUI();
+			BuildTagSelectorMenu();
+			DisplaySelectedTags();
 		}
 
 		~QuestionEditor()
 		{
-			currentlyEditing.OnDataChanged -= DrawComponentUI;
+			currentlyEditing.OnComponentChanged -= DrawComponentUI;
+			currentlyEditing.OnQuizElementListChanged -= DrawElementListUI;
+			FileManager.CurrentFile.OnTagsChanged -= AvailableTagsChanged;
 			CommandHandler.ClearCommandStack();
 		}
 
@@ -37,22 +46,55 @@ namespace QuizMaker
 
 		private void DrawElementListUI()
 		{
-			string[] keys = currentlyEditing.GetAllQuizElementKeys();
-			foreach (string key in keys)
+			QuizElementList.Items.Clear();
+			string[] names = currentlyEditing.GetAllQuizElementNames();
+
+			for (int i = 0; i < names.Length; i++)
 			{
 				ListViewItem toAdd = new ListViewItem
 				{
-					Content = key
+					Content = names[i]
 				};
-				toAdd.Selected += QuizElementSelected;
+
+				int index = i;
+				toAdd.Selected += delegate { QuizElementSelected(index); };
 				QuizElementList.Items.Add(toAdd);
 			}
 		}
 
-		private void DrawAddComponentMenu()
+		private void DisplaySelectedTags(MenuItem[] selectedTags = null)
 		{
-			ComponentMenu.Items.Clear();
-			ComponentMenu.Items.Add(UIBuilder.BuildComponentMenu(selectedQuizElement));
+			string selectedTagsString = string.Empty;
+
+			if (FileManager.CurrentFile.allAvailableTags.Count > 0)
+			{
+				if (selectedTags == null)
+				{
+					selectedTags = GetSelectedMenuItems();
+				}
+
+				foreach (MenuItem tag in selectedTags)
+				{
+					if (selectedTagsString.Length == 0)
+						selectedTagsString += tag.Header;
+					else
+						selectedTagsString += ", " + tag.Header;
+				}
+
+				if (selectedTagsString.Length > MAX_CHARACTER_TAG_SELECTOR)
+				{
+					selectedTagsString = selectedTagsString.Substring(0, MAX_CHARACTER_TAG_SELECTOR) + "...";
+				}
+
+				if (string.IsNullOrWhiteSpace(selectedTagsString))
+					selectedTagsString = "No tags selected";
+			}
+			else
+			{
+				selectedTagsString = "Use the Tag Manager to add tags";
+			}
+
+			TagSelector.Header = selectedTagsString;
 		}
 
 		private void ApplyAndExit(object sender, RoutedEventArgs e)
@@ -65,12 +107,118 @@ namespace QuizMaker
 			MainWindow.ShowPage(new QuizOverview(), MainWindow.MainContentFrame);
 		}
 
-		private void QuizElementSelected(object sender, RoutedEventArgs e)
+		private void QuizElementSelected(int index)
 		{
-			string selectedKey = ((ListViewItem)sender).Content.ToString();
-			selectedQuizElement = currentlyEditing.quizElements[selectedKey];
+			MinusButton.IsEnabled = index > 1;
+
+			selectedQuizElement = currentlyEditing.quizElements[index];
 			DrawComponentUI();
-			DrawAddComponentMenu();
+			BuildComponentMenu(selectedQuizElement);
+		}
+
+		private void EvaluateSelectedTags()
+		{
+			List<MenuItem> selectedTags = new List<MenuItem>();
+			ItemCollection allTags = TagSelector.Items;
+
+			for (int i = 0; i < allTags.Count; i++)
+			{
+				if (allTags[i] is MenuItem menuItem)
+				{
+					if (menuItem.IsChecked)
+					{
+						currentlyEditing.ToggleTag(i, true);
+						selectedTags.Add(menuItem);
+					}
+					else
+					{
+						currentlyEditing.ToggleTag(i, false);
+					}
+				}
+			}
+
+			DisplaySelectedTags(selectedTags.ToArray());
+		}
+
+		private MenuItem[] GetSelectedMenuItems()
+		{
+			List<MenuItem> toReturn = new List<MenuItem>();
+			ItemCollection items = TagSelector.Items;
+			for (int i = 0; i < items.Count; i++)
+			{
+				if (items[i] is MenuItem menuItem && menuItem.IsChecked)
+				{
+					toReturn.Add(menuItem);
+				}
+			}
+
+			return toReturn.ToArray();
+		}
+
+		private void BuildTagSelectorMenu()
+		{
+			List<Tag> possibleTags = FileManager.CurrentFile.allAvailableTags;
+			List<MenuItem> toReturn = new List<MenuItem>();
+
+			for (int i = 0; i < possibleTags.Count; i++)
+			{
+				MenuItem toAdd = new MenuItem()
+				{
+					Header = possibleTags[i].tag,
+					IsCheckable = true,
+					IsChecked = currentlyEditing.IsTagSelected(i)
+				};
+
+				toAdd.Click += delegate { EvaluateSelectedTags(); };
+
+				toReturn.Add(toAdd);
+			}
+
+			TagSelector.ItemsSource = toReturn;
+		}
+
+		public void BuildComponentMenu(QuizElement componentOwner)
+		{
+			ComponentMenu.Items.Clear();
+
+			MenuItem parent = new MenuItem
+			{
+				Header = "Add Component",
+				Padding = new Thickness(25, 5, 25, 5)
+			};
+
+			Type[] allComponents = HierarchyHelper.GetTypesThatInheritFrom<QuizComponent>();
+			List<MenuItem> menuItems = new List<MenuItem>();
+
+			foreach (Type componentType in allComponents)
+			{
+				MenuItem toAdd = new MenuItem()
+				{
+					Header = componentType.Name,
+				};
+
+				toAdd.Click += delegate { componentOwner.AddComponent(componentType); };
+				menuItems.Add(toAdd);
+			}
+
+			parent.ItemsSource = menuItems;
+			ComponentMenu.Items.Add(parent);
+		}
+
+		private void AvailableTagsChanged()
+		{
+			BuildTagSelectorMenu();
+			DisplaySelectedTags();
+		}
+
+		private void PlusButtonClicked(object sender, RoutedEventArgs e)
+		{
+			currentlyEditing.AddWrongAnswer();
+		}
+
+		private void MinusButtonClicked(object sender, RoutedEventArgs e)
+		{
+			currentlyEditing.RemoveWrongAnswer(QuizElementList.SelectedIndex);
 		}
 	}
 }
