@@ -195,6 +195,7 @@ namespace QuizMaker
 				MenuItem toAdd = new MenuItem()
 				{
 					Header = componentType.Name,
+					IsEnabled = componentType == typeof(TextComponent)
 				};
 
 				toAdd.Click += delegate { componentOwner.AddComponent(componentType); };

@@ -63,7 +63,7 @@ namespace QuizMaker
 		[DataMember]
 		public List<QuizElement> quizElements = new List<QuizElement>();
 		[DataMember]
-		private int selectedTagsBitmask = 0;
+		private int selectedTagsInBits = 0;
 
 
 		public delegate void DataEvent();
@@ -97,14 +97,14 @@ namespace QuizMaker
 		public void ToggleTag(int index, bool toggle)
 		{
 			if (toggle)
-				selectedTagsBitmask |= (1 << index);
+				selectedTagsInBits |= (1 << index);
 			else
-				selectedTagsBitmask &= ~(1 << index);
+				selectedTagsInBits &= ~(1 << index);
 		}
 
 		public bool IsTagSelected(int index)
 		{
-			return (selectedTagsBitmask & (1 << index)) != 0;
+			return (selectedTagsInBits & (1 << index)) != 0;
 		}
 
 		public void DrawElement(int elementIndex, Panel parent)
