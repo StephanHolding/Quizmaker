@@ -21,7 +21,7 @@ namespace QuizMaker
         public void UpdateUI()
         {
 	        List<QuizBlock> blocks = FileManager.CurrentFile.allBlocks;
-	        QuestionContainer.Children.Clear();
+	        QuestionContainer.Items.Clear();
 
 	        for (int i = 0; i < blocks.Count; i++)
 	        {
@@ -35,7 +35,7 @@ namespace QuizMaker
 		        int index = i;
 		        newButton.Click += delegate { QuestionButtonClicked(index); };
 
-		        QuestionContainer.Children.Add(newButton);
+		        QuestionContainer.Items.Add(newButton);
 	        }
         }
 
@@ -47,7 +47,16 @@ namespace QuizMaker
 		private void AddNewQuestionButtonClick(object sender, RoutedEventArgs e)
         {
             QuizBlock newQ = FileManager.CurrentFile.AddBlock();
-            MainWindow.ShowPage(new QuestionEditor(newQ), MainWindow.MainContentFrame);
+			UpdateUI();
         }
+
+		private void RemoveSelected(object sender, RoutedEventArgs e)
+		{
+			if (QuestionContainer.SelectedIndex != -1)
+			{
+				FileManager.CurrentFile.RemoveBlockByOrderInList(QuestionContainer.SelectedIndex);
+				UpdateUI();
+			}
+		}
     }
 }

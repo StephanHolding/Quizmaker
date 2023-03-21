@@ -86,9 +86,18 @@ namespace QuizMaker
 
 		public QuizBlock AddBlock()
 		{
-			QuizBlock toReturn = new QuizBlock();
+			QuizBlock toReturn = new QuizBlock("Untitled Question", allBlocks.Count);
 			allBlocks.Add(toReturn);
 			return toReturn;
+		}
+
+		public void RemoveBlockByOrderInList(int listOrder)
+		{
+			QuizBlock toRemove = GetByListOrder(listOrder);
+			if (toRemove != null)
+			{
+				allBlocks.Remove(toRemove);
+			}
 		}
 
 		public QuizBlock GetBlock(int index)
@@ -127,7 +136,7 @@ namespace QuizMaker
 			return -1;
 		}
 
-		public QuizBlock GetLatest()
+		/*public QuizBlock GetLatest()
 		{
 			try
 			{
@@ -138,6 +147,19 @@ namespace QuizMaker
 				Console.WriteLine(e);
 				throw;
 			}
+		}*/
+
+		private QuizBlock GetByListOrder(int listOrder)
+		{
+			for (int i = 0; i < allBlocks.Count; i++)
+			{
+				if (allBlocks[i].listOrder == listOrder)
+				{
+					return allBlocks[i];
+				}
+			}
+
+			return null;
 		}
 	}
 }

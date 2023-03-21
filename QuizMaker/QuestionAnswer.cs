@@ -64,6 +64,10 @@ namespace QuizMaker
 		public List<QuizElement> quizElements = new List<QuizElement>();
 		[DataMember]
 		private int selectedTagsInBits = 0;
+		[DataMember]
+		public string questionName;
+		[DataMember]
+		public int listOrder;
 
 
 		public delegate void DataEvent();
@@ -71,11 +75,12 @@ namespace QuizMaker
 		public event DataEvent OnQuizElementListChanged;
 
 
-		public QuizBlock()
+		public QuizBlock(string questionName, int listOrder)
 		{
 			quizElements.Add(new QuizElement("Question"));
 			quizElements.Add(new QuizElement("Correct Answer"));
 
+			this.questionName = questionName;
 			InjectReferences();
 		}
 
