@@ -20,7 +20,22 @@
             </ScrollViewer>-->
 
             <ListView HorizontalContentAlignment="Stretch" x:Name="QuestionContainer">
+                <ListViewItem>
+                    <Grid>
 
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0">VRAAG NAAM</Label>
+                        <Button Grid.Column="1" Padding="20, 2" Margin="5,0">Edit</Button>
+                        <Button Grid.Column="2" Padding="7, 2">▲</Button>
+                        <Button Grid.Column="3" Padding="7, 2">▼</Button>
+                    </Grid>
+                </ListViewItem>
             </ListView>
 
         </Border>

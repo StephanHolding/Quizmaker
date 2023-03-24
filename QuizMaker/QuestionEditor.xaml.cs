@@ -28,6 +28,7 @@ namespace QuizMaker
 			DrawElementListUI();
 			BuildTagSelectorMenu();
 			DisplaySelectedTags();
+			UpdateNameUI();
 		}
 
 		~QuestionEditor()
@@ -99,6 +100,7 @@ namespace QuizMaker
 
 		private void ApplyAndExit(object sender, RoutedEventArgs e)
 		{
+			currentlyEditing.questionName = !string.IsNullOrWhiteSpace(QuestionNameTextBox.Text) ? QuestionNameTextBox.Text : "Untitled Question";
 			MainWindow.ShowPage(new QuizOverview(), MainWindow.MainContentFrame);
 		}
 
@@ -220,6 +222,11 @@ namespace QuizMaker
 		private void MinusButtonClicked(object sender, RoutedEventArgs e)
 		{
 			currentlyEditing.RemoveWrongAnswer(QuizElementList.SelectedIndex);
+		}
+
+		private void UpdateNameUI()
+		{
+			QuestionNameTextBox.Text = currentlyEditing.questionName;
 		}
 	}
 }

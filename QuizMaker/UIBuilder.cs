@@ -12,32 +12,31 @@ namespace QuizMaker
 	internal static class UIBuilder
 	{
 
-		public static ColumnDefinition autoColumnDefinition = new ColumnDefinition()
-		{
-			Width = new GridLength(1, GridUnitType.Auto)
-		};
-
-		public static ColumnDefinition starColumnDefinition = new ColumnDefinition()
-		{
-			Width = new GridLength(1, GridUnitType.Star)
-		};
-
-		public static RowDefinition autoRowDefinition = new RowDefinition()
-		{
-			Height = new GridLength(1, GridUnitType.Auto)
-		};
-
-		public static RowDefinition starRowDefinition = new RowDefinition()
-		{
-			Height = new GridLength(1, GridUnitType.Star)
-		};
-
 		public static ColumnDefinition CreateStarColumnDefinition(int value)
 		{
 			return new ColumnDefinition()
 			{
 				Width = new GridLength(value, GridUnitType.Star)
 			};
+		}
+
+		public static ColumnDefinition CreateAutoColumnDefinition(int value)
+		{
+			return new ColumnDefinition()
+			{
+				Width = new GridLength(value, GridUnitType.Auto)
+			};
+		}
+
+		public static void AddToGrid(Grid grid, UIElement element, int column = 0, int row = 0)
+		{
+			grid.Children.Add(element);
+
+			if (column != 0)
+				Grid.SetColumn(element, column);
+
+			if (row != 0)
+				Grid.SetRow(element, row);
 		}
 
 	}

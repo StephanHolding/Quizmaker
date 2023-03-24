@@ -14,13 +14,27 @@
             Question Editor
         </Label>
 
-        <StackPanel Grid.Row="1">
-            <Label HorizontalAlignment="Center">Tags:</Label>
-            <Menu HorizontalAlignment="Center">
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="26" />
+                <RowDefinition Height="Auto" MinHeight="25.96" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+
+            <Label Grid.Row="0" HorizontalAlignment="Center" Margin="5">Name:</Label>
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="QuestionNameTextBox" Padding="0, 3" Margin="5"></TextBox>
+
+            <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" Margin="5">Tags:</Label>
+            <Menu Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="5">
                 <MenuItem x:Name="TagSelector" Padding="5">
                 </MenuItem>
             </Menu>
-        </StackPanel>
+        </Grid>
 
         <Grid Row="2" Margin="10, 10">
 
@@ -48,9 +62,9 @@
                     <Grid>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" HorizontalAlignment="Center">Components:</Label>
@@ -59,7 +73,7 @@
 
                         </StackPanel>
 
-                        <Menu Grid.Row="2" x:Name="ComponentMenu" HorizontalAlignment="Center" Margin="10"/>
+                        <Menu Grid.Row="2" x:Name="ComponentMenu" HorizontalAlignment="Center" Margin="10" />
 
                     </Grid>
                 </ScrollViewer>
@@ -73,9 +87,9 @@
         </Grid>
 
         <WrapPanel Grid.Row="3" HorizontalAlignment="Right" Margin="5">
-            <Button Click="Cancel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5, 0" Padding="20, 1">
+            <!--<Button Click="Cancel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5, 0" Padding="20, 1">
                 Cancel
-            </Button>
+            </Button>-->
             <Button Click="ApplyAndExit" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5, 0" Padding="25, 1">
                 OK
             </Button>

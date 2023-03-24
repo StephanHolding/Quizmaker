@@ -91,13 +91,9 @@ namespace QuizMaker
 			return toReturn;
 		}
 
-		public void RemoveBlockByOrderInList(int listOrder)
+		public void RemoveBlock(int index)
 		{
-			QuizBlock toRemove = GetByListOrder(listOrder);
-			if (toRemove != null)
-			{
-				allBlocks.Remove(toRemove);
-			}
+			allBlocks.RemoveAt(index);
 		}
 
 		public QuizBlock GetBlock(int index)
@@ -136,30 +132,12 @@ namespace QuizMaker
 			return -1;
 		}
 
-		/*public QuizBlock GetLatest()
+		public void ReinsertQuizblock(int oldIndex, int newIndex)
 		{
-			try
-			{
-				return allBlocks[allBlocks.Count - 1];
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e);
-				throw;
-			}
-		}*/
-
-		private QuizBlock GetByListOrder(int listOrder)
-		{
-			for (int i = 0; i < allBlocks.Count; i++)
-			{
-				if (allBlocks[i].listOrder == listOrder)
-				{
-					return allBlocks[i];
-				}
-			}
-
-			return null;
+			QuizBlock toInsert = allBlocks[oldIndex];
+			allBlocks.RemoveAt(oldIndex);
+			allBlocks.Insert(newIndex, toInsert);
 		}
+
 	}
 }

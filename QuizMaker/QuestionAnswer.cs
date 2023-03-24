@@ -66,8 +66,6 @@ namespace QuizMaker
 		private int selectedTagsInBits = 0;
 		[DataMember]
 		public string questionName;
-		[DataMember]
-		public int listOrder;
 
 
 		public delegate void DataEvent();
