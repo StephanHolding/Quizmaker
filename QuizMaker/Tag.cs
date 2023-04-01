@@ -15,6 +15,11 @@ namespace QuizMaker
             tag = tagValue;
         }
 
+        public bool IsSet()
+        {
+	        return !string.IsNullOrWhiteSpace(tag);
+        }
+
         [DataMember]
         public string tag;
     }

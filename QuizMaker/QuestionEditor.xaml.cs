@@ -67,33 +67,26 @@ namespace QuizMaker
 		{
 			string selectedTagsString = string.Empty;
 
-			if (FileManager.CurrentFile.allAvailableTags.Count > 0)
+			if (selectedTags == null)
 			{
-				if (selectedTags == null)
-				{
-					selectedTags = GetSelectedMenuItems();
-				}
-
-				foreach (MenuItem tag in selectedTags)
-				{
-					if (selectedTagsString.Length == 0)
-						selectedTagsString += tag.Header;
-					else
-						selectedTagsString += ", " + tag.Header;
-				}
-
-				if (selectedTagsString.Length > MAX_CHARACTER_TAG_SELECTOR)
-				{
-					selectedTagsString = selectedTagsString.Substring(0, MAX_CHARACTER_TAG_SELECTOR) + "...";
-				}
-
-				if (string.IsNullOrWhiteSpace(selectedTagsString))
-					selectedTagsString = "No tags selected";
+				selectedTags = GetSelectedMenuItems();
 			}
-			else
+
+			foreach (MenuItem tag in selectedTags)
 			{
-				selectedTagsString = "Use the Tag Manager to add tags";
+				if (selectedTagsString.Length == 0)
+					selectedTagsString += tag.Header;
+				else
+					selectedTagsString += ", " + tag.Header;
 			}
+
+			if (selectedTagsString.Length > MAX_CHARACTER_TAG_SELECTOR)
+			{
+				selectedTagsString = selectedTagsString.Substring(0, MAX_CHARACTER_TAG_SELECTOR) + "...";
+			}
+
+			if (string.IsNullOrWhiteSpace(selectedTagsString))
+				selectedTagsString = "No tags selected";
 
 			TagSelector.Header = selectedTagsString;
 		}
@@ -159,21 +152,24 @@ namespace QuizMaker
 
 		private void BuildTagSelectorMenu()
 		{
-			List<Tag> possibleTags = FileManager.CurrentFile.allAvailableTags;
+			Tag[] possibleTags = FileManager.CurrentFile.allAvailableTags;
 			List<MenuItem> toReturn = new List<MenuItem>();
 
-			for (int i = 0; i < possibleTags.Count; i++)
+			for (int i = 0; i < possibleTags.Length; i++)
 			{
-				MenuItem toAdd = new MenuItem()
+				if (possibleTags[i].IsSet())
 				{
-					Header = possibleTags[i].tag,
-					IsCheckable = true,
-					IsChecked = currentlyEditing.IsTagSelected(i)
-				};
+					MenuItem toAdd = new MenuItem()
+					{
+						Header = possibleTags[i].tag,
+						IsCheckable = true,
+						IsChecked = currentlyEditing.IsTagSelected(i)
+					};
 
-				toAdd.Click += delegate { EvaluateSelectedTags(); };
+					toAdd.Click += delegate { EvaluateSelectedTags(); };
 
-				toReturn.Add(toAdd);
+					toReturn.Add(toAdd);
+				}
 			}
 
 			TagSelector.ItemsSource = toReturn;
@@ -197,7 +193,7 @@ namespace QuizMaker
 				MenuItem toAdd = new MenuItem()
 				{
 					Header = componentType.Name,
-					IsEnabled = componentType == typeof(TextComponent)
+					IsEnabled = componentType == typeof(TextComponent) || componentType == typeof(ImageComponent)
 				};
 
 				toAdd.Click += delegate { componentOwner.AddComponent(componentType); };

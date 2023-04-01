@@ -11,7 +11,7 @@ namespace QuizMaker
 	{
 		public static SaveFile CurrentFile { get; private set; }
 
-		public const string EXTENSION_FILTER = "Quiz files (*.quiz)|*.quiz";
+		public const string EXTENSION_FILTER = "XML files (*.xml)|*.xml";
 
 		public static void NewFile()
 		{
@@ -64,13 +64,17 @@ namespace QuizMaker
 		public SaveFile()
 		{
 			allBlocks = new List<QuizBlock>();
-			allAvailableTags = new List<Tag>();
+			allAvailableTags = new Tag[32];
+			for (int i = 0; i < allAvailableTags.Length; i++)
+			{
+				allAvailableTags[i] = new Tag(string.Empty);
+			}
 		}
 
 		[DataMember]
 		public List<QuizBlock> allBlocks;
 		[DataMember]
-		public List<Tag> allAvailableTags;
+		public Tag[] allAvailableTags;
 
 		public delegate void DataEvent();
 
@@ -101,7 +105,7 @@ namespace QuizMaker
 			return allBlocks[index];
 		}
 
-		public void AddAvailableTag(string tagValue)
+		/*public void AddAvailableTag(string tagValue)
 		{
 			allAvailableTags.Add(new Tag(tagValue));
 			OnTagsChanged?.Invoke();
@@ -111,7 +115,7 @@ namespace QuizMaker
 		{
 			allAvailableTags.RemoveAt(index);
 			OnTagsChanged?.Invoke();
-		}
+		}*/
 
 		public void ChangeAvailableTagValue(int index, string newValue)
 		{
@@ -121,7 +125,7 @@ namespace QuizMaker
 
 		public int GetTagIndex(string tagName)
 		{
-			for (int i = 0; i < allAvailableTags.Count; i++)
+			for (int i = 0; i < allAvailableTags.Length; i++)
 			{
 				if (allAvailableTags[i].tag == tagName)
 				{
@@ -134,9 +138,12 @@ namespace QuizMaker
 
 		public void ReinsertQuizblock(int oldIndex, int newIndex)
 		{
-			QuizBlock toInsert = allBlocks[oldIndex];
-			allBlocks.RemoveAt(oldIndex);
-			allBlocks.Insert(newIndex, toInsert);
+			if (newIndex >= 0 && newIndex < allBlocks.Count)
+			{
+				QuizBlock toInsert = allBlocks[oldIndex];
+				allBlocks.RemoveAt(oldIndex);
+				allBlocks.Insert(newIndex, toInsert);
+			}
 		}
 
 	}

@@ -39,35 +39,12 @@ namespace QuizMaker
 
 		private void OpenFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
-			OpenFileDialog openFileDialog = new OpenFileDialog
-			{
-				Filter = FileManager.EXTENSION_FILTER
-			};
-
-			if (openFileDialog.ShowDialog() == true)
-			{
-				if (openFileDialog.CheckFileExists)
-				{
-					if (FileManager.Load(openFileDialog.FileName))
-					{
-						ShowPage(new QuizOverview(), MainContentFrame);
-						ShowPage(new TagTab(), TagManagerFrame);
-					}
-				}
-			}
+			Open();
 		}
 
 		private void SaveFileMenuItemClicked(object sender, RoutedEventArgs e)
 		{
-			SaveFileDialog saveFileDialog = new SaveFileDialog
-			{
-				Filter = FileManager.EXTENSION_FILTER
-			};
-
-			if (saveFileDialog.ShowDialog() == true)
-			{
-				FileManager.SaveCurrent(saveFileDialog.FileName);
-			}
+			Save();
 		}
 
 		private void ToggleHintsClicked(object sender, RoutedEventArgs e)
@@ -99,5 +76,62 @@ namespace QuizMaker
 		{
 			e.CanExecute = true;
 		}
+
+		private void Save_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (FileManager.CurrentFile != null)
+			{
+				Save();
+			}
+		}
+
+		private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
+		private void Save()
+		{
+			SaveFileDialog saveFileDialog = new SaveFileDialog
+			{
+				Filter = FileManager.EXTENSION_FILTER
+			};
+
+			if (saveFileDialog.ShowDialog() == true)
+			{
+				FileManager.SaveCurrent(saveFileDialog.FileName);
+			}
+		}
+
+		private void Open()
+		{
+			OpenFileDialog openFileDialog = new OpenFileDialog
+			{
+				Filter = FileManager.EXTENSION_FILTER
+			};
+
+			if (openFileDialog.ShowDialog() == true)
+			{
+				if (openFileDialog.CheckFileExists)
+				{
+					if (FileManager.Load(openFileDialog.FileName))
+					{
+						ShowPage(new QuizOverview(), MainContentFrame);
+						ShowPage(new TagTab(), TagManagerFrame);
+					}
+				}
+			}
+		}
+
+		private void Open_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			Open();
+		}
+
+		private void Open_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
 	}
 }

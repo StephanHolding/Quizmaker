@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -17,11 +18,12 @@ namespace QuizMaker
 
 		private void UpdateUI()
 		{
-			List<Tag> tags = FileManager.CurrentFile.allAvailableTags;
-			List<ListViewItem> items = new List<ListViewItem>();
+			TagListView.Items.Clear();
+			Tag[] tags = FileManager.CurrentFile.allAvailableTags;
+			ObservableCollection<ListViewItem> items = new ObservableCollection<ListViewItem>();
 
-			for (int i = 0; i < tags.Count; i++)
-			{ 
+			for (int i = 0; i < tags.Length; i++)
+			{
 				ListViewItem item = DrawTagItem(tags[i], i);
 				items.Add(item);
 			}
@@ -31,14 +33,20 @@ namespace QuizMaker
 
 		private ListViewItem DrawTagItem(Tag tag, int index)
 		{
+			ListViewItem toReturn = new ListViewItem
+			{
+				Margin = new Thickness(2),
+			};
+
 			Grid itemContent = new Grid()
 			{
+				Margin = new Thickness(2),
 				ColumnDefinitions = { UIBuilder.CreateStarColumnDefinition(1), UIBuilder.CreateStarColumnDefinition(3) }
 			};
 
 			TextBlock indexLabel = new TextBlock()
 			{
-				Text = index.ToString() + ": ",
+				Text = (index + 1).ToString() + ": ",
 				VerticalAlignment = VerticalAlignment.Center,
 			};
 
@@ -48,38 +56,21 @@ namespace QuizMaker
 				Text = tag.tag
 			};
 
-			textBox.GotFocus += SelectParent;
+			textBox.GotFocus += delegate { SelectListViewItem(toReturn); };
 			textBox.LostFocus += UpdateFile;
 
-			indexLabel.SetValue(Grid.ColumnProperty, 0);
-			textBox.SetValue(Grid.ColumnProperty, 1);
+			UIBuilder.AddToGrid(itemContent, indexLabel);
+			UIBuilder.AddToGrid(itemContent, textBox, 1);
 
-			itemContent.Children.Add(indexLabel);
-			itemContent.Children.Add(textBox);
-
-			ListViewItem toReturn = new ListViewItem
-			{
-				Margin = new Thickness(2),
-
-				Content = itemContent
-			};
+			toReturn.Content = itemContent;
 
 			return toReturn;
 		}
 
-		private void SelectParent(object sender, RoutedEventArgs routedEventArgs)
+		private void SelectListViewItem(ListViewItem item)
 		{
-			DependencyObject parent = HierarchyHelper.FindParentOfType<ListViewItem>(sender as TextBox);
-
-			if (parent is ListViewItem listViewItem)
-			{
-				TagListView.SelectedItems.Clear();
-				listViewItem.IsSelected = true;
-			}
-			else
-			{
-				MessageBox.Show("its not a listview man");
-			}
+			TagListView.SelectedItems.Clear();
+			item.IsSelected = true;
 		}
 
 		private void UpdateFile(object sender, RoutedEventArgs routedEventArgs)
@@ -88,7 +79,7 @@ namespace QuizMaker
 			FileManager.CurrentFile.ChangeAvailableTagValue(TagListView.SelectedIndex, changed.Text);
 		}
 
-		private void OnAddNewTag(object sender, RoutedEventArgs e)
+		/*private void OnAddNewTag(object sender, RoutedEventArgs e)
 		{
 			FileManager.CurrentFile.AddAvailableTag(string.Empty);
 			UpdateUI();
@@ -98,6 +89,6 @@ namespace QuizMaker
 		{
 			FileManager.CurrentFile.RemoveAvailableTag(TagListView.SelectedIndex);
 			UpdateUI();
-		}
+		}*/
 	}
 }

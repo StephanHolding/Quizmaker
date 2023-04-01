@@ -8,6 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using QuizMaker.Commands;
 using System.Runtime.Serialization;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace QuizMaker
@@ -32,23 +35,23 @@ namespace QuizMaker
 	[DataContract]
 	public abstract class DynamicUI
 	{
-		public abstract Control[] Draw();
+		public abstract UIElement[] Draw();
 
 		public void AddToUI(Panel addTo)
 		{
-			Control[] controls = Draw();
-			foreach (Control c in controls)
+			UIElement[] controls = Draw();
+			foreach (UIElement element in controls)
 			{
-				addTo.Children.Add(c);
+				addTo.Children.Add(element);
 			}
 		}
 
 		public void AddToUI(ItemsControl addTo)
 		{
-			Control[] controls = Draw();
-			foreach (Control c in controls)
+			UIElement[] controls = Draw();
+			foreach (UIElement element in controls)
 			{
-				addTo.Items.Add(c);
+				addTo.Items.Add(element);
 			}
 		}
 	}
@@ -257,7 +260,7 @@ namespace QuizMaker
 		[DataMember]
 		private object componentData;
 
-		protected virtual Control DrawComponentHeader()
+		protected virtual UIElement DrawComponentHeader()
 		{
 			Button removeButton = new Button
 			{
@@ -297,9 +300,9 @@ namespace QuizMaker
 	public class TextComponent : QuizComponent
 	{
 
-		public override Control[] Draw()
+		public override UIElement[] Draw()
 		{
-			List<Control> toReturn = new List<Control>
+			List<UIElement> toReturn = new List<UIElement>
 			{
 				DrawComponentHeader(),
 			};
@@ -324,16 +327,64 @@ namespace QuizMaker
 	public class ImageComponent : QuizComponent
 	{
 
-		public override Control[] Draw()
+		public override UIElement[] Draw()
 		{
-			throw new NotImplementedException();
+			List<UIElement> toReturn = new List<UIElement>
+			{
+				DrawComponentHeader(),
+			};
+
+			TextBox textBox = new TextBox()
+			{
+				Padding = new Thickness(3),
+				Margin = new Thickness(5, 0, 5, 0)
+			};
+
+			Image image = new Image()
+			{
+				Margin = new Thickness(30),
+				Effect = new DropShadowEffect()
+				{
+					BlurRadius = 20
+				}
+			};
+
+			textBox.TextChanged += delegate { ValidateLink(textBox.Text, image); };
+
+			if (DataIsPresent())
+				textBox.Text = GetData<string>();
+
+			toReturn.Add(textBox);
+			toReturn.Add(image);
+
+			return toReturn.ToArray();
+		}
+
+		private void ValidateLink(string link, Image image)
+		{
+			if (Uri.IsWellFormedUriString(link, UriKind.Absolute))
+			{
+				SetData(link);
+
+				BitmapImage bitmapImage = new BitmapImage();
+				bitmapImage.BeginInit();
+				bitmapImage.UriSource = new Uri(link, UriKind.Absolute);
+				bitmapImage.EndInit();
+
+				image.Source = bitmapImage;
+				image.IsEnabled = true;
+			}
+			else
+			{
+				image.IsEnabled = false;
+			}
 		}
 	}
 
 	[DataContract]
 	public class AudioComponent : QuizComponent
 	{
-		public override Control[] Draw()
+		public override UIElement[] Draw()
 		{
 			throw new NotImplementedException();
 		}

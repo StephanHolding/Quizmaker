@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuizMaker"
         mc:Ignorable="d"
-        Title="Quiz Maker" Height="600" Width="500"
-        ResizeMode="NoResize"
+        Title="Quiz Maker" Height="800" Width="700" MinHeight="800" MinWidth="700"
+        ResizeMode="CanResizeWithGrip"
         Background="#f0f0f0">
 
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Undo" Executed="Undo_OnExecuted" CanExecute="Undo_OnCanExecute"/>
         <CommandBinding Command="ApplicationCommands.Redo" Executed="Redo_OnExecuted" CanExecute="Redo_OnCanExecute" />
+        <CommandBinding Command="ApplicationCommands.Save" Executed="Save_OnExecuted" CanExecute="Save_CanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Open" Executed="Open_OnExecuted" CanExecute="Open_CanExecute"/>
     </Window.CommandBindings>
 
     <Window.InputBindings>
@@ -29,9 +31,9 @@
                 <Separator/>
                 <MenuItem Click="ExitButtonClicked" Header="_Exit"></MenuItem>
             </MenuItem>
-            <MenuItem Header="_View">
+            <!--<MenuItem Header="_View">
                 <MenuItem Click="ToggleHintsClicked" Header="Toggle _Hints" IsCheckable="True" IsChecked="True"></MenuItem>
-            </MenuItem>
+            </MenuItem>-->
         </Menu>
 
         <Grid x:Name="TestGrid">

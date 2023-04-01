@@ -45,7 +45,7 @@ namespace QuizMaker
 				Button editButton = new Button()
 				{
 					Content = "Edit",
-					Padding = new Thickness(10, 1, 10, 1),
+					Padding = new Thickness(40, 1, 40, 1),
 					Margin = new Thickness(5, 0, 5, 0)
 				};
 				editButton.Click += delegate { QuestionButtonClicked(index); };
@@ -86,13 +86,15 @@ namespace QuizMaker
 
 		private void MoveQuestionUp(int index)
 		{
-			FileManager.CurrentFile.ReinsertQuizblock(index, index--);
+			int newIndex = index - 1;
+			FileManager.CurrentFile.ReinsertQuizblock(index, newIndex);
 			UpdateUI();
 		}
 
 		private void MoveQuestionDown(int index)
 		{
-			FileManager.CurrentFile.ReinsertQuizblock(index, index++);
+			int newIndex = index + 1;
+			FileManager.CurrentFile.ReinsertQuizblock(index, newIndex);
 			UpdateUI();
 		}
 

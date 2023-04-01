@@ -31,12 +31,8 @@ namespace QuizMaker
 		public static void AddToGrid(Grid grid, UIElement element, int column = 0, int row = 0)
 		{
 			grid.Children.Add(element);
-
-			if (column != 0)
-				Grid.SetColumn(element, column);
-
-			if (row != 0)
-				Grid.SetRow(element, row);
+			Grid.SetColumn(element, column);
+			Grid.SetRow(element, row);
 		}
 
 	}
